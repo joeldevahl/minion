@@ -1,0 +1,28 @@
+function build(settings)
+	settings.objdir = Path("objs")
+	
+	src = Collect("src/*.c")
+	objs = Compile(settings, src)
+	exe = Link(settings, "minion", objs)
+	
+	return exe
+end
+
+debug_settings = NewSettings()
+debug_settings.config_name = "debug"
+debug_settings.config_ext = "_d"
+debug_settings.cc.includes:add("include")
+debug_settings.debug = 1
+debug_settings.cc.optimize = 0
+
+release_settings = NewSettings()
+release_settings.config_name = "release"
+release_settings.config_ext = ""
+release_settings.cc.includes:add("include")
+release_settings.debug = 0
+release_settings.cc.optimize = 1
+release_settings.cc.flags = "/Ox /Ot /Oy /GL"
+release_settings.linker.flags = "/LTCG"
+
+Target(build(debug_settings))
+--Target(build(release_settings))

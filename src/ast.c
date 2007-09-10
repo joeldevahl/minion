@@ -3,6 +3,7 @@
 #include "object.h"
 #include "string.h"
 #include "state.h"
+#include "config.h"
 
 #include <stdlib.h>
 #include <stdio.h>

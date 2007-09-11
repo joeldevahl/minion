@@ -21,9 +21,9 @@ struct Object *String_length(struct Object *o)
 	struct Object *len = State_cloneProto(state, "Integer");
 
 	if (!o || !o->data.str)
-		len->val = 0;
+		len->data.val = 0;
 	else
-		len->val = strlen(o->data.str);
+		len->data.val = strlen(o->data.str);
 
 	return len;
 }

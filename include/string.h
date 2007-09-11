@@ -4,6 +4,7 @@
 struct State;
 struct Object;
 
+unsigned String_length(struct Object *o);
 void String_unescape(struct Object *o);
 unsigned String_isString(struct Object *o);
 void String_register(struct State *state);

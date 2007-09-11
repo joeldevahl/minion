@@ -16,6 +16,18 @@ struct Object *String_print(struct Object *o, struct Object *locals, struct Obje
 
 // Interface
 
+struct Object *String_length(struct Object *o)
+{
+	struct Object *len = State_cloneProto(state, "Integer");
+
+	if (!o || !o->data.str)
+		len->val = 0;
+	else
+		len->val = strlen(o->data.str);
+
+	return len;
+}
+
 void String_unescape(struct Object *o)
 {
 	char *src;
@@ -69,6 +81,7 @@ void String_register(struct State *state)
 	o->isLiteral = 1;
 
 	Object_registerFunction(state, o, "print", &String_print);
+	Object_registerFunction(state, o, "length", &String_length);
 
 	State_registerProto(state, o, "String");
 }

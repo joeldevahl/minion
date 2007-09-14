@@ -10,55 +10,55 @@
 
 // Object Slots
 
-struct Object *Object_if(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_if(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(locals, locals, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, locals, locals, param);
 
-	params_list = Object_getSlot(params_list, NEXT);
+	params_list = Object_getSlot(state, params_list, NEXT);
 
 	if(!res->data.ptr)
-		params_list = Object_getSlot(params_list, NEXT);
+		params_list = Object_getSlot(state, params_list, NEXT);
 
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(locals, locals, param);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, locals, locals, param);
 
 	return res;
 }
 
-struct Object *Object_do(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_do(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(o, o, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, o, o, param);
 
 	return res;
 }
 
 // Interface
 
-struct Object *Object_new()
+struct Object *Object_new(struct State *state)
 {
 	return calloc(1, sizeof(struct Object));
 }
 
-void Object_delete(struct Object *o)
+void Object_delete(struct State *state, struct Object *o)
 {
-	o->free_func(o);
+	o->free_func(state, o);
 	Hash_delete(o->hash);
 	free(o);
 }
 
-void Object_init(struct Object *o)
+void Object_init(struct State *state, struct Object *o)
 {
 	o->hash = calloc(1, sizeof(struct Hash));
 	Hash_init(o->hash, 2);
@@ -81,14 +81,14 @@ void Object_registerFunction(struct State *state, struct Object *o, const char *
 {
 	unsigned hash = Hash_genHashVal(name);
 	struct Object *fun = State_cloneProto(state, "Function");
-	Function_setTarget(fun, ptr);
-	Object_setSlot(o, fun, hash);
+	Function_setTarget(state, fun, ptr);
+	Object_setSlot(state, o, fun, hash);
 }
 
-struct Object *Object_clone(struct Object *o)
+struct Object *Object_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_new();
-	Object_init(ret);
+	struct Object *ret = Object_new(state);
+	Object_init(state, ret);
 	Hash_copy(ret->hash, o->hash);
 
 	ret->clone_func = o->clone_func;
@@ -99,39 +99,39 @@ struct Object *Object_clone(struct Object *o)
 	return ret;
 }
 
-void Object_free(struct Object *o)
+void Object_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Object_eval(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	return o;
 }
 
-struct Object *Object_evalExpression(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
-	struct Object *target = Object_getSlot(o, hash);
+	struct Object *target = Object_getSlot(state, o, hash);
 
 	if(target)
-		return target->eval_func(o, locals, message);
+		return target->eval_func(state, o, locals, message);
 
 	return 0x0;
 }
 
-void Object_createSlot(struct Object *o, unsigned name_hash)
+void Object_createSlot(struct State *state, struct Object *o, unsigned name_hash)
 {
-	struct Object *val = Object_new();
-	Object_init(val);
+	struct Object *val = Object_new(state);
+	Object_init(state, val);
 	Hash_set_h(o->hash, name_hash, val);
 }
 
-void Object_setSlot(struct Object *o, struct Object *val, unsigned name_hash)
+void Object_setSlot(struct State *state, struct Object *o, struct Object *val, unsigned name_hash)
 {
 	Hash_set_h(o->hash, name_hash, val);
 }
 
-struct Object *Object_getSlot(struct Object *o, unsigned name_hash)
+struct Object *Object_getSlot(struct State *state, struct Object *o, unsigned name_hash)
 {
 	struct Object *ret = Hash_get_h(o->hash, name_hash);
 
@@ -142,7 +142,7 @@ struct Object *Object_getSlot(struct Object *o, unsigned name_hash)
 		unsigned proto_hash = Hash_genHashVal("proto");
 		struct Object *proto = Hash_get_h(o->hash, proto_hash);
 		if(proto)
-			return Object_getSlot(proto, name_hash);
+			return Object_getSlot(state, proto, name_hash);
 	}
 
 	return 0x0;
@@ -154,7 +154,7 @@ void print_indent(unsigned i)
 		printf("\t");
 }
 
-void Object_deepPrint(struct Object *o, unsigned indent, unsigned first)
+void Object_deepPrint(struct State *state, struct Object *o, unsigned indent, unsigned first)
 {
 	struct Object *child, *params, *next;
 	if(!o)
@@ -163,24 +163,24 @@ void Object_deepPrint(struct Object *o, unsigned indent, unsigned first)
 	if(first)
 		print_indent(indent);
 
-	if(String_isString(o) || Message_isMessage(o))
+	if(String_isString(state, o) || Message_isMessage(state, o))
 		printf("%s ", o->data.ptr);
-	else if(Integer_isInteger(o))
+	else if(Integer_isInteger(state, o))
 		printf("%d ", o->data.val);
 	else
 		*((int*)(0x0)) = 0;
 
-	params = Object_getSlot(o, PARAMS);
+	params = Object_getSlot(state, o, PARAMS);
 	if(params)
 	{
 		struct Object *p = params;
 		printf("(\n");
 		while(p)
 		{
-			child = Object_getSlot(p, CHILD);
-			Object_deepPrint(child, indent + 1, 1);
+			child = Object_getSlot(state, p, CHILD);
+			Object_deepPrint(state, child, indent + 1, 1);
 
-			p = Object_getSlot(p, NEXT);
+			p = Object_getSlot(state, p, NEXT);
 			if(p)
 			{
 				print_indent(indent + 1);
@@ -191,18 +191,18 @@ void Object_deepPrint(struct Object *o, unsigned indent, unsigned first)
 		printf(") ");
 	}
 
-	child = Object_getSlot(o, CHILD); 
+	child = Object_getSlot(state, o, CHILD); 
 	if(child)
-		Object_deepPrint(child, indent, 0);
+		Object_deepPrint(state, child, indent, 0);
 	else
 		printf("\n");
 
-	next = Object_getSlot(o, NEXT);
-	Object_deepPrint(next, indent, 1);
+	next = Object_getSlot(state, o, NEXT);
+	Object_deepPrint(state, next, indent, 1);
 }
 
-void Object_appendProto(struct Object *o, struct Object *proto)
+void Object_appendProto(struct State *state, struct Object *o, struct Object *proto)
 {
 	unsigned proto_hash = Hash_genHashVal("proto");
-	Object_setSlot(o, proto, proto_hash);
+	Object_setSlot(state, o, proto, proto_hash);
 }

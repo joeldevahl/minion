@@ -13,14 +13,14 @@ void AST_init(struct AST *ast, struct State *state)
 {
 	ast->state = state;
 	ast->root = Object_new();
-	Object_init(ast->root);
+	Object_init(ast->state, ast->root);
 	ast->obj = ast->root;
 	AST_stepChild(ast);
 }
 
 void AST_deepPrint(struct AST *ast, unsigned indent, unsigned first)
 {
-	Object_deepPrint(Object_getSlot(ast->root, CHILD), indent, first);
+	Object_deepPrint(ast->state, Object_getSlot(ast->state, ast->root, CHILD), indent, first);
 }
 
 void AST_addMsg(struct AST *ast, const char *name, unsigned length)
@@ -35,7 +35,7 @@ void AST_addString(struct AST *ast, const char *name, unsigned length)
 	AST_createAndStep(ast, "String");
 	ast->obj->data.ptr = calloc(length - 1, sizeof(char));
 	memcpy(ast->obj->data.ptr, name+1, length * sizeof(char) - 2);
-	String_unescape(ast->obj);
+	String_unescape(ast->state, ast->obj, 0x0, 0x0);
 }
 
 void AST_addNumber(struct AST *ast, const char *val, unsigned length)
@@ -46,17 +46,17 @@ void AST_addNumber(struct AST *ast, const char *val, unsigned length)
 
 void AST_createAndStep(struct AST *ast, const char *proto)
 {
-	if(!Object_getSlot(ast->obj, ast->targetHash))
+	if(!Object_getSlot(ast->state, ast->obj, ast->targetHash))
 	{
 		struct Object *o = State_cloneProto(ast->state, proto);
-		Object_setSlot(ast->obj, o, ast->targetHash);
+		Object_setSlot(ast->state, ast->obj, o, ast->targetHash);
 	}
 	AST_step(ast);
 }
 
 void AST_step(struct AST *ast)
 {
-	ast->obj = Object_getSlot(ast->obj, ast->targetHash);
+	ast->obj = Object_getSlot(ast->state, ast->obj, ast->targetHash);
 }
 
 void AST_stepChild(struct AST *ast)
@@ -95,5 +95,5 @@ void AST_revert(struct AST *ast, struct AST_State *mark)
 
 struct Object *AST_getMessageRoot(struct AST *ast)
 {
-	return Object_getSlot(ast->root, CHILD);
+	return Object_getSlot(ast->state, ast->root, CHILD);
 }

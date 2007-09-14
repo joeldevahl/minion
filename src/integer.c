@@ -7,71 +7,71 @@
 
 //Integer Slots
 
-struct Object *Integer_add(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_add(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(o);
+	struct Object *ret = Integer_clone(state, o);
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(o, o, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, o, o, param);
 
 	ret->data.val += res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_sub(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_sub(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(o);
+	struct Object *ret = Integer_clone(state, o);
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(o, o, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, o, o, param);
 
 	ret->data.val -= res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_mul(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_mul(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(o);
+	struct Object *ret = Integer_clone(state, o);
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(o, o, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, o, o, param);
 
 	ret->data.val *= res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_div(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_div(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(o);
+	struct Object *ret = Integer_clone(state, o);
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
-	params_list = Object_getSlot(message, PARAMS);
-	param = Object_getSlot(params_list, CHILD);
-	res = State_doSeq(o, o, param);
+	params_list = Object_getSlot(state, message, PARAMS);
+	param = Object_getSlot(state, params_list, CHILD);
+	res = State_doSeq(state, o, o, param);
 
 	ret->data.val /= res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_print(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	printf("%d", o->data.val);
 	return o;
@@ -79,17 +79,17 @@ struct Object *Integer_print(struct Object *o, struct Object *locals, struct Obj
 
 // Interface
 
-unsigned Integer_isInteger(struct Object *o)
+unsigned Integer_isInteger(struct State *state, struct Object *o)
 {
 	return o->clone_func == &Integer_clone;
 }
 
 void Integer_register(struct State *state)
 {
-	struct Object *o = Object_new();
+	struct Object *o = Object_new(state);
 	struct Object *obj = State_getObject(state);
-	Object_init(o);
-	Object_appendProto(o, obj);
+	Object_init(state, o);
+	Object_appendProto(state, o, obj);
 
 	o->clone_func = &Integer_clone;
 	o->free_func = &Integer_free;
@@ -105,19 +105,19 @@ void Integer_register(struct State *state)
 	State_registerProto(state, o, "Integer");
 }
 
-struct Object *Integer_clone(struct Object *o)
+struct Object *Integer_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_clone(o);
+	struct Object *ret = Object_clone(state, o);
 	ret->data.val = o->data.val;
 
 	return ret;
 }
 
-void Integer_free(struct Object *o)
+void Integer_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Integer_eval(struct Object *o, struct Object *locals, struct Object *Integer)
+struct Object *Integer_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *Integer)
 {
 	return o;
 }

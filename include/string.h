@@ -4,12 +4,12 @@
 struct State;
 struct Object;
 
-struct Object *String_length(struct Object *o);
-void String_unescape(struct Object *o);
-unsigned String_isString(struct Object *o);
+struct Object *String_length(struct State *state, struct Object *o, struct Object *locals, struct Object *message);
+struct Object *String_unescape(struct State *state, struct Object *o, struct Object *locals, struct Object *message);
+unsigned String_isString(struct State *state, struct Object *o);
 void String_register(struct State *state);
-struct Object *String_clone(struct Object *o);
-void String_free(struct Object *o);
-struct Object *String_eval(struct Object *o, struct Object *locals, struct Object *message);
+struct Object *String_clone(struct State *state, struct Object *o);
+void String_free(struct State *state, struct Object *o);
+struct Object *String_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message);
 
 #endif

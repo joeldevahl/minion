@@ -10,19 +10,19 @@
 
 void State_init(struct State *state)
 {
-	state->root = Object_new();
-	Object_init(state->root);
+	state->root = Object_new(state);
+	Object_init(state, state->root);
 }
 
 void State_delete(struct State *state)
 {
-	Object_delete(state->root);
+	Object_delete(state, state->root);
 }
 
 void State_registerProto(struct State *state, struct Object *o, const char* name)
 {
 	unsigned hash = Hash_genHashVal(name);
-	Object_setSlot(state->root, o, hash);
+	Object_setSlot(state, state->root, o, hash);
 }
 
 struct Object *State_getObject(struct State *state)
@@ -33,14 +33,14 @@ struct Object *State_getObject(struct State *state)
 struct Object *State_getProto(struct State *state, const char* name)
 {
 	unsigned hash = Hash_genHashVal(name);
-	return Object_getSlot(state->root, hash);
+	return Object_getSlot(state, state->root, hash);
 }
 
 struct Object *State_cloneProto(struct State *state, const char* name)
 {
 	struct Object *o = State_getProto(state, name);
 	if(o)
-		return o->clone_func(o);
+		return o->clone_func(state, o);
 
 	return 0x0;
 }
@@ -101,10 +101,10 @@ struct Object *State_doAST(struct State *state, struct AST *ast)
 	struct Object *o = State_getProto(state, "Object");
 	struct Object *msg = AST_getMessageRoot(ast);
 
-	return State_doSeq(o, o, msg);
+	return State_doSeq(state, o, o, msg);
 }
 
-struct Object *State_doSeq(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *State_doSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *res;
 	
@@ -114,25 +114,25 @@ struct Object *State_doSeq(struct Object *o, struct Object *locals, struct Objec
 		if(message->isLiteral)
 		{
 			res = o = message;
-			message = Object_getSlot(message, CHILD);
+			message = Object_getSlot(state, message, CHILD);
 		}
 
 		if(message)
 		{
-			res = State_doChildSeq(o, locals, message);
-			message = Object_getSlot(orig_message, NEXT);
+			res = State_doChildSeq(state, o, locals, message);
+			message = Object_getSlot(state, orig_message, NEXT);
 		}
 	}
 
 	return res;
 }
 
-struct Object *State_doChildSeq(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *State_doChildSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	while(o && message)
 	{
-		o = Object_evalExpression(o, locals, message);
-		message = Object_getSlot(message, CHILD);
+		o = Object_evalExpression(state, o, locals, message);
+		message = Object_getSlot(state, message, CHILD);
 	}
 
 	return o;

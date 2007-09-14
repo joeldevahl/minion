@@ -8,7 +8,7 @@
 
 // String Slots
 
-struct Object *String_print(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	printf("%s", o->data.ptr);
 	return o;
@@ -16,7 +16,7 @@ struct Object *String_print(struct Object *o, struct Object *locals, struct Obje
 
 // Interface
 
-struct Object *String_length(struct Object *o)
+struct Object *String_length(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *len = State_cloneProto(state, "Integer");
 
@@ -28,7 +28,7 @@ struct Object *String_length(struct Object *o)
 	return len;
 }
 
-void String_unescape(struct Object *o)
+struct Object *String_unescape(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	char *src;
 	char *dst;
@@ -63,17 +63,17 @@ void String_unescape(struct Object *o)
 	*dst = '\0';
 }
 
-unsigned String_isString(struct Object *o)
+unsigned String_isString(struct State *state, struct Object *o)
 {
-	return o->clone_func == &String_clone;
+	return o->clone_func == (CloneFunc)&String_clone;
 }
 
 void String_register(struct State *state)
 {
-	struct Object *o = Object_new();
+	struct Object *o = Object_new(state);
 	struct Object *obj = State_getObject(state);
-	Object_init(o);
-	Object_appendProto(o, obj);
+	Object_init(state, o);
+	Object_appendProto(state, o, obj);
 
 	o->clone_func = &String_clone;
 	o->free_func = &String_free;
@@ -86,9 +86,9 @@ void String_register(struct State *state)
 	State_registerProto(state, o, "String");
 }
 
-struct Object *String_clone(struct Object *o)
+struct Object *String_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_clone(o);
+	struct Object *ret = Object_clone(state, o);
 
 	if(o->data.ptr){
 		unsigned length = (unsigned)strlen((char*)o->data.ptr);
@@ -99,12 +99,12 @@ struct Object *String_clone(struct Object *o)
 	return ret;
 }
 
-void String_free(struct Object *o)
+void String_free(struct State *state, struct Object *o)
 {
 	free(o->data.ptr);
 }
 
-struct Object *String_eval(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	return o;
 }

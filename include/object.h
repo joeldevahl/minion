@@ -9,6 +9,10 @@
 struct State;
 struct Hash;
 
+typedef struct Object *(*CloneFunc)(struct State *, struct Object *);
+typedef void (*FreeFunc)(struct State *, struct Object *);
+typedef struct Object *(*EvalFunc)(struct State *, struct Object *, struct Object *, struct Object *);
+
 struct Object
 {
 	union
@@ -22,24 +26,24 @@ struct Object
 
 	struct Hash *hash;
 
-	struct Object *(*clone_func)(struct Object *);
-	void (*free_func)(struct Object *);
-	struct Object *(*eval_func)(struct Object *, struct Object *, struct Object *);
+	CloneFunc clone_func;
+	FreeFunc free_func;
+	EvalFunc eval_func;
 };
 
 struct Object *Object_new();
-void Object_delete(struct Object *o);
-void Object_init(struct Object *o);
+void Object_delete(struct State *state, struct Object *o);
+void Object_init(struct State *state, struct Object *o);
 void Object_register(struct State *state);
 void Object_registerFunction(struct State *state, struct Object *o, const char *name, void *ptr);
-struct Object *Object_clone(struct Object *o);
-void Object_free(struct Object *o);
-struct Object *Object_eval(struct Object *o, struct Object *locals, struct Object *message);
-struct Object *Object_evalExpression(struct Object *o, struct Object *locals, struct Object *message);
-void Object_deepPrint(struct Object *o, unsigned indent, unsigned first);
-void Object_createSlot(struct Object *o, unsigned name_hash);
-void Object_setSlot(struct Object *o, struct Object *val, unsigned name_hash);
-struct Object *Object_getSlot(struct Object *o, unsigned name_hash);
-void Object_appendProto(struct Object *o, struct Object *proto);
+struct Object *Object_clone(struct State *state, struct Object *o);
+void Object_free(struct State *state, struct Object *o);
+struct Object *Object_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message);
+struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *locals, struct Object *message);
+void Object_deepPrint(struct State *state, struct Object *o, unsigned indent, unsigned first);
+void Object_createSlot(struct State *state, struct Object *o, unsigned name_hash);
+void Object_setSlot(struct State *state, struct Object *o, struct Object *val, unsigned name_hash);
+struct Object *Object_getSlot(struct State *state, struct Object *o, unsigned name_hash);
+void Object_appendProto(struct State *state, struct Object *o, struct Object *proto);
 
 #endif

@@ -7,8 +7,8 @@
 
 void List_register(struct State *state)
 {
-	struct Object *o = Object_new();
-	Object_init(o);
+	struct Object *o = Object_new(state);
+	Object_init(state, o);
 
 	o->clone_func = &List_clone;
 	o->free_func = &List_free;
@@ -17,18 +17,18 @@ void List_register(struct State *state)
 	State_registerProto(state, o, "List");
 }
 
-struct Object *List_clone(struct Object *o)
+struct Object *List_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_clone(o);
+	struct Object *ret = Object_clone(state, o);
 
 	return ret;
 }
 
-void List_free(struct Object *o)
+void List_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *List_eval(struct Object *o, struct Object *locals, struct Object *List)
+struct Object *List_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *List)
 {
 	return o;
 }

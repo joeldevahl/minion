@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-unsigned Message_isMessage(struct Object *o)
+unsigned Message_isMessage(struct State *state, struct Object *o)
 {
 	return o->clone_func == &Message_clone;
 }
@@ -13,8 +13,8 @@ unsigned Message_isMessage(struct Object *o)
 
 void Message_register(struct State *state)
 {
-	struct Object *o = Object_new();
-	Object_init(o);
+	struct Object *o = Object_new(state);
+	Object_init(state, o);
 
 	o->clone_func = &Message_clone;
 	o->free_func = &Message_free;
@@ -23,9 +23,9 @@ void Message_register(struct State *state)
 	State_registerProto(state, o, "Message");
 }
 
-struct Object *Message_clone(struct Object *o)
+struct Object *Message_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_clone(o);
+	struct Object *ret = Object_clone(state, o);
 
 	if(o->data.ptr){
 		unsigned length = (unsigned)strlen(o->data.ptr);
@@ -36,12 +36,12 @@ struct Object *Message_clone(struct Object *o)
 	return ret;
 }
 
-void Message_free(struct Object *o)
+void Message_free(struct State *state, struct Object *o)
 {
 	free(o->data.ptr);
 }
 
-struct Object *Message_eval(struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Message_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	return o;
 }

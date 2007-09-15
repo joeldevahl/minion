@@ -9,9 +9,9 @@
 #include "real.h"
 #include "string.h"
 
-#include "hash.h"
+#include <stdio.h>
 
-int main()
+int main(int argc, char **argv)
 {
 	struct State state;
 
@@ -26,7 +26,36 @@ int main()
 	Real_register(&state);
 	String_register(&state);
 
-	State_doFile(&state, "test.io");
+	State_doFile(&state, "init.io");
+
+	if(argc > 1)
+	{
+		int i = 1;
+		while(i < argc)
+		{
+			State_doFile(&state, argv[i]);
+			i++;
+		}
+	}
+	else
+	{
+		struct Object *res;
+		char str[1024];
+		while(1)
+		{
+			printf("% ");
+			fflush(stdout);
+			fgets(str, 1024, stdin);
+
+			res = State_doString(&state, str);
+
+			printf("=> ");
+			if(res)
+				Object_deepPrint(&state, res, 0, 1);
+			else
+				printf("NIL\n");
+		}
+	}
 
 	State_delete(&state);
 

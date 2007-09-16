@@ -10,6 +10,52 @@
 
 // Object Slots
 
+struct Object *Object_createSlot2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+{
+	struct Object *params_list;
+	struct Object *name;
+	struct Object *value;
+	unsigned hash;
+
+	params_list = Object_getSlot(state, message, PARAMS);
+	name = Object_getSlot(state, params_list, CHILD);
+	params_list = Object_getSlot(state, params_list, NEXT);
+	value = Object_getSlot(state, params_list, CHILD);
+
+	value = State_doSeq(state, locals, locals, value);
+
+	hash = Hash_genHashVal(name->data.ptr);
+	Object_createSlot(state, o, hash);
+	Object_setSlot(state, o, value, hash);
+
+	return value;
+}
+
+struct Object *Object_setSlot2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+{
+	struct Object *params_list;
+	struct Object *name;
+	struct Object *value;
+	unsigned hash;
+
+	params_list = Object_getSlot(state, message, PARAMS);
+	name = Object_getSlot(state, params_list, CHILD);
+	params_list = Object_getSlot(state, params_list, NEXT);
+	value = Object_getSlot(state, params_list, CHILD);
+
+	value = State_doSeq(state, locals, locals, value);
+
+	hash = Hash_genHashVal(name->data.ptr);
+	Object_setSlot(state, o, value, hash);
+
+	return value;
+}
+
+struct Object *Object_clone2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+{
+	return Object_clone(state, o);
+}
+
 struct Object *Object_if(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *params_list;
@@ -73,6 +119,9 @@ void Object_register(struct State *state)
 
 	Object_registerFunction(state, o, "if", &Object_if);
 	Object_registerFunction(state, o, "do", &Object_do);
+	Object_registerFunction(state, o, "createSlot", &Object_createSlot2);
+	Object_registerFunction(state, o, "setSlot", &Object_setSlot2);
+	Object_registerFunction(state, o, "clone", &Object_clone2);
 
 	State_registerProto(state, o, "Object");
 }
@@ -168,7 +217,7 @@ void Object_deepPrint(struct State *state, struct Object *o, unsigned indent, un
 	else if(Integer_isInteger(state, o))
 		printf("%d ", o->data.val);
 	else
-		*((int*)(0x0)) = 0;
+		printf("Object_<#%x> ", o);
 
 	params = Object_getSlot(state, o, PARAMS);
 	if(params)

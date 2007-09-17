@@ -9,7 +9,7 @@
 
 struct Object *Integer_add(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(state, o);
+	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
@@ -18,14 +18,14 @@ struct Object *Integer_add(struct State *state, struct Object *o, struct Object 
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, o, param);
 
-	ret->data.val += res->data.val;
+	ret->data.val = o->data.val + res->data.val;
 
 	return ret;
 }
 
 struct Object *Integer_sub(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(state, o);
+	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
@@ -34,14 +34,14 @@ struct Object *Integer_sub(struct State *state, struct Object *o, struct Object 
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, o, param);
 
-	ret->data.val -= res->data.val;
+	ret->data.val = o->data.val - res->data.val;
 
 	return ret;
 }
 
 struct Object *Integer_mul(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(state, o);
+	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
@@ -50,14 +50,14 @@ struct Object *Integer_mul(struct State *state, struct Object *o, struct Object 
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, o, param);
 
-	ret->data.val *= res->data.val;
+	ret->data.val = o->data.val * res->data.val;
 
 	return ret;
 }
 
 struct Object *Integer_div(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *ret = Integer_clone(state, o);
+	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
@@ -66,7 +66,7 @@ struct Object *Integer_div(struct State *state, struct Object *o, struct Object 
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, o, param);
 
-	ret->data.val /= res->data.val;
+	ret->data.val = o->data.val / res->data.val;
 
 	return ret;
 }

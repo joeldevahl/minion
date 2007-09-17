@@ -19,6 +19,7 @@ void Message_register(struct State *state)
 	o->clone_func = &Message_clone;
 	o->free_func = &Message_free;
 	o->eval_func = &Message_eval;
+	o->isLiteral = 0;
 
 	State_registerProto(state, o, "Message");
 }

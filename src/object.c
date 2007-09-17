@@ -111,6 +111,7 @@ void Object_init(struct State *state, struct Object *o)
 	o->clone_func = &Object_clone;
 	o->free_func = &Object_free;
 	o->eval_func = &Object_eval;
+	o->isLiteral = 1;
 }
 
 void Object_register(struct State *state)
@@ -163,7 +164,12 @@ struct Object *Object_evalExpression(struct State *state, struct Object *o, stru
 	struct Object *target = Object_getSlot(state, o, hash);
 
 	if(target)
-		return target->eval_func(state, o, locals, message);
+	{
+		if(target->isLiteral)
+			return target;
+		else
+			return target->eval_func(state, o, locals, message);
+	}
 
 	return 0x0;
 }

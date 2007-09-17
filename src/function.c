@@ -9,6 +9,7 @@ void Function_register(struct State *state)
 
 	o->clone_func = &Function_clone;
 	o->eval_func = &Function_eval;
+	o->isLiteral = 0;
 
 	State_registerProto(state, o, "Function");
 }

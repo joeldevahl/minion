@@ -10,6 +10,16 @@
 
 // Object Slots
 
+struct Object *Object_method(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+{
+	struct Object *ret = State_cloneProto(state, "Message");
+	ret->isLiteral = 0;
+	Object_createSlot(state, ret, PARAMS);
+	Object_setSlot(state, ret, Object_getSlot(state, message, PARAMS), PARAMS);
+
+	return ret;
+}
+
 struct Object *Object_createSlot2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *params_list;
@@ -123,6 +133,7 @@ void Object_register(struct State *state)
 	Object_registerFunction(state, o, "createSlot", &Object_createSlot2);
 	Object_registerFunction(state, o, "setSlot", &Object_setSlot2);
 	Object_registerFunction(state, o, "clone", &Object_clone2);
+	Object_registerFunction(state, o, "method", &Object_method);
 
 	State_registerProto(state, o, "Object");
 }
@@ -162,6 +173,9 @@ struct Object *Object_evalExpression(struct State *state, struct Object *o, stru
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
 	struct Object *target = Object_getSlot(state, o, hash);
+
+	if(!target)
+		target = Object_getSlot(state, locals, hash);
 
 	if(target)
 	{

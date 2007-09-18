@@ -48,7 +48,7 @@ struct Object *Integer_mul(struct State *state, struct Object *o, struct Object 
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, o, param);
+	res = State_doSeq(state, o, locals, param);
 
 	ret->data.val = o->data.val * res->data.val;
 

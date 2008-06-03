@@ -106,7 +106,7 @@ struct Object *State_doAST(struct State *state, struct AST *ast)
 
 struct Object *State_doSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
-	struct Object *res;
+	struct Object *res = 0x0;
 	
 	while(message)
 	{

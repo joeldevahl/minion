@@ -1,6 +1,7 @@
 #include "message.h"
 #include "object.h"
 #include "state.h"
+#include "hash.h"
 
 #include <string.h>
 #include <stdlib.h>

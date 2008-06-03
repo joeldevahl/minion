@@ -2,6 +2,7 @@
 #include "state.h"
 #include "hash.h"
 #include "function.h"
+#include "message.h"
 
 #include <stdlib.h>
 #include <stdio.h>

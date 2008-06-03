@@ -34,7 +34,7 @@ struct Object *String_unescape(struct State *state, struct Object *o, struct Obj
 	char *dst;
 
 	if(!o || !o->data.ptr)
-		return;
+		return 0x0;
 
 	src = dst = o->data.ptr;
 
@@ -61,6 +61,8 @@ struct Object *String_unescape(struct State *state, struct Object *o, struct Obj
 	}
 
 	*dst = '\0';
+
+	return o;
 }
 
 unsigned String_isString(struct State *state, struct Object *o)

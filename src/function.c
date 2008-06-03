@@ -1,6 +1,7 @@
 #include "function.h"
 #include "object.h"
 #include "state.h"
+#include "hash.h"
 
 void Function_register(struct State *state)
 {

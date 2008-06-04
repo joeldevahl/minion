@@ -12,7 +12,7 @@
 
 // Object Slots
 
-struct Object *Object_bound_method(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_method(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Message");
 	ret->isLiteral = 0;
@@ -22,7 +22,7 @@ struct Object *Object_bound_method(struct State *state, struct Object *o, struct
 	return ret;
 }
 
-struct Object *Object_bound_createSlot(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_createSlot(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *name;
@@ -34,7 +34,7 @@ struct Object *Object_bound_createSlot(struct State *state, struct Object *o, st
 	params_list = Object_getSlot(state, params_list, NEXT);
 	value = Object_getSlot(state, params_list, CHILD);
 
-	value = State_doSeq(state, o, basenv, env, value);
+	value = State_doSeq(state, o, env, value);
 
 	hash = Hash_genHashVal(name->data.ptr);
 	Object_createSlot(state, o, hash);
@@ -43,7 +43,7 @@ struct Object *Object_bound_createSlot(struct State *state, struct Object *o, st
 	return value;
 }
 
-struct Object *Object_bound_setSlot(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_setSlot(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *name;
@@ -55,7 +55,7 @@ struct Object *Object_bound_setSlot(struct State *state, struct Object *o, struc
 	params_list = Object_getSlot(state, params_list, NEXT);
 	value = Object_getSlot(state, params_list, CHILD);
 
-	value = State_doSeq(state, env, basenv, env, value);
+	value = State_doSeq(state, env, env, value);
 
 	hash = Hash_genHashVal(name->data.ptr);
 	Object_setSlot(state, o, value, hash);
@@ -63,12 +63,12 @@ struct Object *Object_bound_setSlot(struct State *state, struct Object *o, struc
 	return value;
 }
 
-struct Object *Object_bound_clone(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_clone(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	return Object_clone(state, o);
 }
 
-struct Object *Object_bound_if(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_if(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
@@ -80,7 +80,7 @@ struct Object *Object_bound_if(struct State *state, struct Object *o, struct Obj
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, basenv, env, param);
+	res = State_doSeq(state, o, env, param);
 
 	params_list = Object_getSlot(state, params_list, NEXT);
 
@@ -88,12 +88,12 @@ struct Object *Object_bound_if(struct State *state, struct Object *o, struct Obj
 		params_list = Object_getSlot(state, params_list, NEXT);
 
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, basenv, env, param);
+	res = State_doSeq(state, o, env, param);
 
 	return res;
 }
 
-struct Object *Object_bound_do(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_bound_do(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
@@ -101,7 +101,7 @@ struct Object *Object_bound_do(struct State *state, struct Object *o, struct Obj
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, basenv, o, param);
+	res = State_doSeq(state, o, o, param);
 
 	return res;
 }
@@ -170,12 +170,12 @@ void Object_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Object_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_eval(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	return o;
 }
 
-struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
 	struct Object *target = Object_getSlot(state, o, hash);
@@ -188,7 +188,7 @@ struct Object *Object_evalExpression(struct State *state, struct Object *o, stru
 		if(target->isLiteral)
 			return target;
 		else
-			return target->eval_func(state, o, basenv, env, message);
+			return target->eval_func(state, o, env, message);
 	}
 
 	return 0x0;

@@ -30,7 +30,7 @@ void Bool_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Bool_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Bool_eval(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	return o;
 }

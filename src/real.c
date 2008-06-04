@@ -29,7 +29,7 @@ void Real_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Real_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *Real_eval(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	return o;
 }

@@ -7,7 +7,7 @@
 #include "message.h"
 #include "object.h"
 #include "real.h"
-#include "string.h"
+#include "str.h"
 
 #include <stdio.h>
 

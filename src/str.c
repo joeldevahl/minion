@@ -1,4 +1,4 @@
-#include "string.h"
+#include "str.h"
 #include "object.h"
 #include "state.h"
 
@@ -8,14 +8,14 @@
 
 // String Slots
 
-struct Object *String_bound_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_bound_print(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	printf("%s", o->data.ptr);
 	return o;
 }
 
 
-struct Object *String_bound_length(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_bound_length(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *len = State_cloneProto(state, "Integer");
 
@@ -29,7 +29,7 @@ struct Object *String_bound_length(struct State *state, struct Object *o, struct
 
 // Interface
 
-struct Object *String_unescape(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_unescape(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	char *src;
 	char *dst;
@@ -107,7 +107,7 @@ void String_free(struct State *state, struct Object *o)
 	free(o->data.ptr);
 }
 
-struct Object *String_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
+struct Object *String_eval(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	return o;
 }

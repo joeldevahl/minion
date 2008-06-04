@@ -1,7 +1,7 @@
 #include "ast.h"
 #include "hash.h"
 #include "object.h"
-#include "string.h"
+#include "str.h"
 #include "state.h"
 #include "config.h"
 

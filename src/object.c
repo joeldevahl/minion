@@ -88,7 +88,7 @@ struct Object *Object_bound_if(struct State *state, struct Object *o, struct Obj
 		params_list = Object_getSlot(state, params_list, NEXT);
 
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, basenv, basenv, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	return res;
 }

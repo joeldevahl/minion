@@ -24,7 +24,7 @@ struct Object *Function_clone(struct State *state, struct Object *o)
 	return ret;
 }
 
-struct Object *Function_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Function_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
 	struct Object * target = Object_getSlot(state, o, hash);
@@ -32,7 +32,7 @@ struct Object *Function_eval(struct State *state, struct Object *o, struct Objec
 	if(target && target->data.ptr)
 	{
 		EvalFunc function = (EvalFunc)target->data.ptr;
-		o = function(state, o, locals, message);
+		o = function(state, o, basenv, env, message);
 	}
 
 	return o;

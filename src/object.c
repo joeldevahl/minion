@@ -11,7 +11,7 @@
 
 // Object Slots
 
-struct Object *Object_method(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_method(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Message");
 	ret->isLiteral = 0;
@@ -21,7 +21,7 @@ struct Object *Object_method(struct State *state, struct Object *o, struct Objec
 	return ret;
 }
 
-struct Object *Object_createSlot2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_createSlot(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *name;
@@ -33,7 +33,7 @@ struct Object *Object_createSlot2(struct State *state, struct Object *o, struct 
 	params_list = Object_getSlot(state, params_list, NEXT);
 	value = Object_getSlot(state, params_list, CHILD);
 
-	value = State_doSeq(state, locals, locals, value);
+	value = State_doSeq(state, o, basenv, env, value);
 
 	hash = Hash_genHashVal(name->data.ptr);
 	Object_createSlot(state, o, hash);
@@ -42,7 +42,7 @@ struct Object *Object_createSlot2(struct State *state, struct Object *o, struct 
 	return value;
 }
 
-struct Object *Object_setSlot2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_setSlot(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *name;
@@ -54,7 +54,7 @@ struct Object *Object_setSlot2(struct State *state, struct Object *o, struct Obj
 	params_list = Object_getSlot(state, params_list, NEXT);
 	value = Object_getSlot(state, params_list, CHILD);
 
-	value = State_doSeq(state, locals, locals, value);
+	value = State_doSeq(state, env, basenv, env, value);
 
 	hash = Hash_genHashVal(name->data.ptr);
 	Object_setSlot(state, o, value, hash);
@@ -62,24 +62,24 @@ struct Object *Object_setSlot2(struct State *state, struct Object *o, struct Obj
 	return value;
 }
 
-struct Object *Object_clone2(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_clone(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return Object_clone(state, o);
 }
 
-struct Object *Object_if(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_if(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
 	struct Object *res;
 
 	Object_deepPrint(state, o, 0,0);
-	Object_deepPrint(state, locals, 0, 0);
+	Object_deepPrint(state, env, 0, 0);
 	Object_deepPrint(state, message, 0, 0);
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	params_list = Object_getSlot(state, params_list, NEXT);
 
@@ -87,12 +87,12 @@ struct Object *Object_if(struct State *state, struct Object *o, struct Object *l
 		params_list = Object_getSlot(state, params_list, NEXT);
 
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, basenv, param);
 
 	return res;
 }
 
-struct Object *Object_do(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_bound_do(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *params_list;
 	struct Object *param;
@@ -100,7 +100,7 @@ struct Object *Object_do(struct State *state, struct Object *o, struct Object *l
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, o, param);
+	res = State_doSeq(state, o, basenv, o, param);
 
 	return res;
 }
@@ -133,12 +133,12 @@ void Object_register(struct State *state)
 {
 	struct Object *o = State_getObject(state);
 
-	Object_registerFunction(state, o, "if", &Object_if);
-	Object_registerFunction(state, o, "do", &Object_do);
-	Object_registerFunction(state, o, "createSlot", &Object_createSlot2);
-	Object_registerFunction(state, o, "setSlot", &Object_setSlot2);
-	Object_registerFunction(state, o, "clone", &Object_clone2);
-	Object_registerFunction(state, o, "method", &Object_method);
+	Object_registerFunction(state, o, "if", &Object_bound_if);
+	Object_registerFunction(state, o, "do", &Object_bound_do);
+	Object_registerFunction(state, o, "createSlot", &Object_bound_createSlot);
+	Object_registerFunction(state, o, "setSlot", &Object_bound_setSlot);
+	Object_registerFunction(state, o, "clone", &Object_bound_clone);
+	Object_registerFunction(state, o, "method", &Object_bound_method);
 
 	State_registerProto(state, o, "Object");
 }
@@ -169,25 +169,25 @@ void Object_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Object_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return o;
 }
 
-struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Object_evalExpression(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
 	struct Object *target = Object_getSlot(state, o, hash);
 
 	if(!target)
-		target = Object_getSlot(state, locals, hash);
+		target = Object_getSlot(state, env, hash);
 
 	if(target)
 	{
 		if(target->isLiteral)
 			return target;
 		else
-			return target->eval_func(state, o, locals, message);
+			return target->eval_func(state, o, basenv, env, message);
 	}
 
 	return 0x0;

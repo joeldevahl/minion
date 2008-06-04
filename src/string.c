@@ -8,15 +8,14 @@
 
 // String Slots
 
-struct Object *String_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_bound_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	printf("%s", o->data.ptr);
 	return o;
 }
 
-// Interface
 
-struct Object *String_length(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_bound_length(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
 	struct Object *len = State_cloneProto(state, "Integer");
 
@@ -27,6 +26,8 @@ struct Object *String_length(struct State *state, struct Object *o, struct Objec
 
 	return len;
 }
+
+// Interface
 
 struct Object *String_unescape(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
@@ -82,8 +83,8 @@ void String_register(struct State *state)
 	o->eval_func = &String_eval;
 	o->isLiteral = 1;
 
-	Object_registerFunction(state, o, "print", &String_print);
-	Object_registerFunction(state, o, "length", &String_length);
+	Object_registerFunction(state, o, "print", &String_bound_print);
+	Object_registerFunction(state, o, "length", &String_bound_length);
 
 	State_registerProto(state, o, "String");
 }

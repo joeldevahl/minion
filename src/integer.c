@@ -8,7 +8,7 @@
 
 //Integer Slots
 
-struct Object *Integer_add(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_bound_add(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
@@ -17,14 +17,14 @@ struct Object *Integer_add(struct State *state, struct Object *o, struct Object 
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	ret->data.val = o->data.val + res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_sub(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_bound_sub(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
@@ -33,14 +33,14 @@ struct Object *Integer_sub(struct State *state, struct Object *o, struct Object 
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	ret->data.val = o->data.val - res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_mul(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_bound_mul(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
@@ -49,14 +49,14 @@ struct Object *Integer_mul(struct State *state, struct Object *o, struct Object 
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	ret->data.val = o->data.val * res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_div(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_bound_div(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Integer");
 	struct Object *params_list;
@@ -65,14 +65,14 @@ struct Object *Integer_div(struct State *state, struct Object *o, struct Object 
 
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, locals, param);
+	res = State_doSeq(state, o, basenv, env, param);
 
 	ret->data.val = o->data.val / res->data.val;
 
 	return ret;
 }
 
-struct Object *Integer_print(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Integer_bound_print(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	printf("%d", o->data.val);
 	return o;
@@ -97,11 +97,11 @@ void Integer_register(struct State *state)
 	o->eval_func = &Integer_eval;
 	o->isLiteral = 1;
 
-	Object_registerFunction(state, o, "add", &Integer_add);
-	Object_registerFunction(state, o, "sub", &Integer_sub);
-	Object_registerFunction(state, o, "mul", &Integer_mul);
-	Object_registerFunction(state, o, "div", &Integer_div);
-	Object_registerFunction(state, o, "print", &Integer_print);
+	Object_registerFunction(state, o, "add", &Integer_bound_add);
+	Object_registerFunction(state, o, "sub", &Integer_bound_sub);
+	Object_registerFunction(state, o, "mul", &Integer_bound_mul);
+	Object_registerFunction(state, o, "div", &Integer_bound_div);
+	Object_registerFunction(state, o, "print", &Integer_bound_print);
 
 	State_registerProto(state, o, "Integer");
 }

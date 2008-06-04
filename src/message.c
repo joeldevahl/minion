@@ -43,7 +43,7 @@ void Message_free(struct State *state, struct Object *o)
 	free(o->data.ptr);
 }
 
-struct Object *Message_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *Message_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	unsigned hash = Hash_genHashVal(message->data.ptr);
 	struct Object *target = Object_getSlot(state, o, hash);
@@ -69,7 +69,7 @@ struct Object *Message_eval(struct State *state, struct Object *o, struct Object
 			src_val_plist = Object_getSlot(state, src_val_plist, NEXT);
 		}
 
-		return State_doSeq(state, o, env, Object_getSlot(state, src_name_plist, CHILD));
+		return State_doSeq(state, o, basenv, env, Object_getSlot(state, src_name_plist, CHILD));
 	}
 
 	return 0x0;

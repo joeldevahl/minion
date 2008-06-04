@@ -107,10 +107,10 @@ struct Object *State_doAST(struct State *state, struct AST *ast)
 	printf("\033[0;40;32mState_doAST:\033[0m\n");
 	AST_deepPrint(ast, 0, 0);
 
-	return State_doSeq(state, o, o, msg);
+	return State_doSeq(state, o, o, o, msg);
 }
 
-struct Object *State_doSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *State_doSeq(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	struct Object *res = 0x0;
 	
@@ -123,14 +123,14 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 		{
 			printf("literal %d\t", message->data.ptr);
 			printf(" o = %x", o);
-			printf(" l = %x\n", locals);
+			printf(" l = %x\n", env);
 			res = o = message;
 			message = Object_getSlot(state, message, CHILD);
 		}
 
 		if(message)
 		{
-			res = State_doChildSeq(state, o, locals, message);
+			res = State_doChildSeq(state, o, basenv, env, message);
 			message = Object_getSlot(state, orig_message, NEXT);
 		}
 	}
@@ -138,15 +138,15 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 	return res;
 }
 
-struct Object *State_doChildSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *State_doChildSeq(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	printf("\033[0;40;32mState_doChildSeq:\033[0m\n");
 	while(o && message)
 	{
 		printf("message %s\t", message->data.ptr);
 		printf(" o = %x", o);
-		printf(" l = %x\n", locals);
-		o = Object_evalExpression(state, o, locals, message);
+		printf(" l = %x\n", env);
+		o = Object_evalExpression(state, o, basenv, env, message);
 		message = Object_getSlot(state, message, CHILD);
 	}
 

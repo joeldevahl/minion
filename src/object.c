@@ -73,9 +73,13 @@ struct Object *Object_if(struct State *state, struct Object *o, struct Object *l
 	struct Object *param;
 	struct Object *res;
 
+	Object_deepPrint(state, o, 0,0);
+	Object_deepPrint(state, locals, 0, 0);
+	Object_deepPrint(state, message, 0, 0);
+
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, locals, locals, param);
+	res = State_doSeq(state, o, locals, param);
 
 	params_list = Object_getSlot(state, params_list, NEXT);
 
@@ -83,7 +87,7 @@ struct Object *Object_if(struct State *state, struct Object *o, struct Object *l
 		params_list = Object_getSlot(state, params_list, NEXT);
 
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, locals, locals, param);
+	res = State_doSeq(state, o, locals, param);
 
 	return res;
 }

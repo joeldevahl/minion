@@ -51,6 +51,8 @@ struct Object *State_doFile(struct State *state, const char *str)
 	unsigned len;
 	char *data;
 	struct Object *ret = 0x0;
+
+	printf("\033[0;40;32mState_doFile\033[0m\t\t%s\n", str);
 	
 	file = fopen(str, "rb");
 	if(!file)
@@ -80,6 +82,8 @@ struct Object *State_doString(struct State *state, const char *str)
 	struct Lexer l;
 	struct AST ast;
 
+	printf("\033[0;40;32mState_doString\033[0m\t\t%s", str);
+
 	Lexer_init(&l);
 	Lexer_setStream(&l, str);
 
@@ -91,7 +95,6 @@ struct Object *State_doString(struct State *state, const char *str)
 
 	Parser_parse(&p);
 
-	//AST_deepPrint(&ast, 0, 0);
 
 	return State_doAST(state, &ast);
 }
@@ -101,6 +104,9 @@ struct Object *State_doAST(struct State *state, struct AST *ast)
 	struct Object *o = State_getProto(state, "Object");
 	struct Object *msg = AST_getMessageRoot(ast);
 
+	printf("\033[0;40;32mState_doAST:\033[0m\n");
+	AST_deepPrint(ast, 0, 0);
+
 	return State_doSeq(state, o, o, msg);
 }
 
@@ -108,11 +114,16 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 {
 	struct Object *res = 0x0;
 	
+	printf("\033[0;40;32mState_doSeq:\033[0m\n");
+	
 	while(message)
 	{
 		struct Object *orig_message = message;
 		if(message->isLiteral)
 		{
+			printf("literal %d\t", message->data.ptr);
+			printf(" o = %x", o);
+			printf(" l = %x\n", locals);
 			res = o = message;
 			message = Object_getSlot(state, message, CHILD);
 		}
@@ -129,8 +140,12 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 
 struct Object *State_doChildSeq(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
 {
+	printf("\033[0;40;32mState_doChildSeq:\033[0m\n");
 	while(o && message)
 	{
+		printf("message %s\t", message->data.ptr);
+		printf(" o = %x", o);
+		printf(" l = %x\n", locals);
 		o = Object_evalExpression(state, o, locals, message);
 		message = Object_getSlot(state, message, CHILD);
 	}

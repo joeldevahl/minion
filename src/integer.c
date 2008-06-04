@@ -19,7 +19,7 @@ struct Object *Integer_bound_add(struct State *state, struct Object *o, struct O
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, basenv, env, param);
 
-	ret->data.val = o->data.val + res->data.val;
+	ret->data.ival = o->data.ival + res->data.ival;
 
 	return ret;
 }
@@ -35,7 +35,7 @@ struct Object *Integer_bound_sub(struct State *state, struct Object *o, struct O
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, basenv, env, param);
 
-	ret->data.val = o->data.val - res->data.val;
+	ret->data.ival = o->data.ival - res->data.ival;
 
 	return ret;
 }
@@ -51,7 +51,7 @@ struct Object *Integer_bound_mul(struct State *state, struct Object *o, struct O
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, basenv, env, param);
 
-	ret->data.val = o->data.val * res->data.val;
+	ret->data.ival = o->data.ival * res->data.ival;
 
 	return ret;
 }
@@ -67,14 +67,14 @@ struct Object *Integer_bound_div(struct State *state, struct Object *o, struct O
 	param = Object_getSlot(state, params_list, CHILD);
 	res = State_doSeq(state, o, basenv, env, param);
 
-	ret->data.val = o->data.val / res->data.val;
+	ret->data.ival = o->data.ival / res->data.ival;
 
 	return ret;
 }
 
 struct Object *Integer_bound_print(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
-	printf("%d", o->data.val);
+	printf("%d", o->data.ival);
 	return o;
 }
 
@@ -109,7 +109,7 @@ void Integer_register(struct State *state)
 struct Object *Integer_clone(struct State *state, struct Object *o)
 {
 	struct Object *ret = Object_clone(state, o);
-	ret->data.val = o->data.val;
+	ret->data.ival = o->data.ival;
 
 	return ret;
 }
@@ -118,7 +118,7 @@ void Integer_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Integer_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *Integer)
+struct Object *Integer_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return o;
 }

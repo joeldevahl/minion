@@ -6,9 +6,6 @@
 #define PARAMS Hash_genHashVal("params")
 #define NAME Hash_genHashVal("name")
 
-struct State;
-struct Hash;
-
 typedef struct Object *(*CloneFunc)(struct State *, struct Object *);
 typedef void (*FreeFunc)(struct State *, struct Object *);
 typedef struct Object *(*EvalFunc)(struct State *, struct Object *, struct Object *, struct Object *, struct Object *);
@@ -19,7 +16,8 @@ struct Object
 	{
 		void *ptr;
 		char *str;
-		unsigned val;
+		unsigned ival;
+		float rval;
 	} data;
 
 	unsigned isLiteral : 1;

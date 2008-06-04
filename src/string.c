@@ -20,9 +20,9 @@ struct Object *String_bound_length(struct State *state, struct Object *o, struct
 	struct Object *len = State_cloneProto(state, "Integer");
 
 	if (!o || !o->data.str)
-		len->data.val = 0;
+		len->data.ival = 0;
 	else
-		len->data.val = strlen(o->data.str);
+		len->data.ival = strlen(o->data.str);
 
 	return len;
 }
@@ -107,7 +107,7 @@ void String_free(struct State *state, struct Object *o)
 	free(o->data.ptr);
 }
 
-struct Object *String_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *message)
+struct Object *String_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return o;
 }

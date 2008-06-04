@@ -4,7 +4,7 @@
 struct State;
 struct Object;
 
-unsigned IMessage_isMessage(struct State *state, struct Object *o);
+unsigned Message_isMessage(struct State *state, struct Object *o);
 void Message_register(struct State *state);
 struct Object *Message_clone(struct State *state, struct Object *o);
 void Message_free(struct State *state, struct Object *o);

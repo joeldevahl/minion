@@ -41,7 +41,7 @@ void AST_addString(struct AST *ast, const char *name, unsigned length)
 void AST_addNumber(struct AST *ast, const char *val, unsigned length)
 {
 	AST_createAndStep(ast, "Integer");
-	ast->obj->data.val = atoi(val);
+	ast->obj->data.ival = atoi(val);
 }
 
 void AST_createAndStep(struct AST *ast, const char *proto)

@@ -21,7 +21,7 @@ void Bool_register(struct State *state)
 struct Object *Bool_clone(struct State *state, struct Object *o)
 {
 	struct Object *ret = Object_clone(state, o);
-	ret->data.val = o->data.val;
+	ret->data.ival = o->data.ival;
 
 	return ret;
 }
@@ -30,7 +30,7 @@ void Bool_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Bool_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *Bool)
+struct Object *Bool_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return o;
 }

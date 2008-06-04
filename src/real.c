@@ -20,7 +20,7 @@ void Real_register(struct State *state)
 struct Object *Real_clone(struct State *state, struct Object *o)
 {
 	struct Object *ret = Object_clone(state, o);
-	ret->data.val = o->data.val;
+	ret->data.rval = o->data.rval;
 
 	return ret;
 }
@@ -29,7 +29,7 @@ void Real_free(struct State *state, struct Object *o)
 {
 }
 
-struct Object *Real_eval(struct State *state, struct Object *o, struct Object *locals, struct Object *Real)
+struct Object *Real_eval(struct State *state, struct Object *o, struct Object *basenv, struct Object *env, struct Object *message)
 {
 	return o;
 }

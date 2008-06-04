@@ -7,6 +7,7 @@
 #include "hash.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 void State_init(struct State *state)
 {

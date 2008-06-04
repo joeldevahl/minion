@@ -3,6 +3,7 @@
 #include "hash.h"
 #include "function.h"
 #include "message.h"
+#include "integer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -240,7 +241,7 @@ void Object_deepPrint(struct State *state, struct Object *o, unsigned indent, un
 	if(String_isString(state, o) || Message_isMessage(state, o))
 		printf("%s ", o->data.ptr);
 	else if(Integer_isInteger(state, o))
-		printf("%d ", o->data.val);
+		printf("%d ", o->data.ival);
 	else
 		printf("Object_<#%x> ", o);
 

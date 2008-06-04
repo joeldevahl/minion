@@ -1,9 +1,11 @@
 #include "hash.h"
 
 #include <string.h>
+#include <locale.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <math.h>
+#include <memory.h>
 
 void Hash_init(struct Hash *h, unsigned size)
 {

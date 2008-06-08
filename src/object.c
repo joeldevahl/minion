@@ -74,13 +74,9 @@ struct Object *Object_bound_if(struct State *state, struct Object *o, struct Obj
 	struct Object *param;
 	struct Object *res;
 
-	Object_deepPrint(state, o, 0,0);
-	Object_deepPrint(state, env, 0, 0);
-	Object_deepPrint(state, message, 0, 0);
-
 	params_list = Object_getSlot(state, message, PARAMS);
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, env, param);
+	res = State_doSeq(state, env, env, param);
 
 	params_list = Object_getSlot(state, params_list, NEXT);
 
@@ -88,7 +84,7 @@ struct Object *Object_bound_if(struct State *state, struct Object *o, struct Obj
 		params_list = Object_getSlot(state, params_list, NEXT);
 
 	param = Object_getSlot(state, params_list, CHILD);
-	res = State_doSeq(state, o, env, param);
+	res = State_doSeq(state, env, env, param);
 
 	return res;
 }
@@ -222,7 +218,15 @@ struct Object *Object_getSlot(struct State *state, struct Object *o, unsigned na
 
 	return 0x0;
 }
-
+/*
+struct Object *Object_lookupSlot(struct State *state, struct Object *o, struct Object *env, unsigned name_hash)
+{
+	struct Object *res = Object_getSlot(state, o, name_hash);
+	if(!res)
+		res = Object_getSlot(state, env, name_hash);
+	return res;
+}
+*/
 void print_indent(unsigned i)
 {
 	while(i--)

@@ -53,7 +53,7 @@ struct Object *State_doFile(struct State *state, const char *str)
 	char *data;
 	struct Object *ret = 0x0;
 
-	printf("\033[0;40;32mState_doFile\033[0m\t\t%s\n", str);
+	//printf("\033[0;40;32mState_doFile\033[0m\t\t%s\n", str);
 	
 	file = fopen(str, "rb");
 	if(!file)
@@ -83,7 +83,7 @@ struct Object *State_doString(struct State *state, const char *str)
 	struct Lexer l;
 	struct AST ast;
 
-	printf("\033[0;40;32mState_doString\033[0m\t\t%s", str);
+	//printf("\033[0;40;32mState_doString\033[0m\t\t%s", str);
 
 	Lexer_init(&l);
 	Lexer_setStream(&l, str);
@@ -105,8 +105,8 @@ struct Object *State_doAST(struct State *state, struct AST *ast)
 	struct Object *o = State_getProto(state, "Object");
 	struct Object *msg = AST_getMessageRoot(ast);
 
-	printf("\033[0;40;32mState_doAST:\033[0m\n");
-	AST_deepPrint(ast, 0, 0);
+	//printf("\033[0;40;32mState_doAST:\033[0m\n");
+	//AST_deepPrint(ast, 0, 0);
 
 	return State_doSeq(state, o, o, msg);
 }
@@ -115,16 +115,20 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 {
 	struct Object *res = 0x0;
 	
-	printf("\033[0;40;32mState_doSeq:\033[0m\n");
+	//printf("\033[0;40;32mState_doSeq:\033[0m\n");
+	//if(message && message->data.ival > 1000)
+	//	printf("message %s\t", message->data.ptr);
+	//printf(" o = %x", o);
+	//printf(" e = %x\n", env);
 	
 	while(message)
 	{
 		struct Object *orig_message = message;
 		if(message->isLiteral)
 		{
-			printf("literal %d\t", message->data.ptr);
-			printf(" o = %x", o);
-			printf(" l = %x\n", env);
+			//printf("literal %d\t", message->data.ptr);
+			//printf(" o = %x", o);
+			//printf(" e = %x\n", env);
 			res = o = message;
 			message = Object_getSlot(state, message, CHILD);
 		}
@@ -141,12 +145,12 @@ struct Object *State_doSeq(struct State *state, struct Object *o, struct Object 
 
 struct Object *State_doChildSeq(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
-	printf("\033[0;40;32mState_doChildSeq:\033[0m\n");
+	//printf("\033[0;40;32mState_doChildSeq:\033[0m\n");
 	while(o && message)
 	{
-		printf("message %s\t", message->data.ptr);
-		printf(" o = %x", o);
-		printf(" l = %x\n", env);
+		//printf("message %s\t", message->data.ptr);
+		//printf(" o = %x", o);
+		//printf(" e = %x\n", env);
 		o = Object_evalExpression(state, o, env, message);
 		message = Object_getSlot(state, message, CHILD);
 	}

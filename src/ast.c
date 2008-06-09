@@ -1,3 +1,8 @@
+/* ast.c
+ * Copyright (C) 2007-2008 Joel de Vahl.
+ * For conditions of distribution and use, see copyright notice in LICENSE
+ */
+
 #include "ast.h"
 #include "hash.h"
 #include "object.h"

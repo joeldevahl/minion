@@ -1,8 +1,12 @@
+/* function.h
+ * Copyright (C) 2007-2008 Joel de Vahl.
+ * For conditions of distribution and use, see copyright notice in LICENSE
+ */
+
 #ifndef MINION_FUNCTION_H
 #define MINION_FUNCTION_H
 
-#include "object.h"
-
+struct Object;
 struct State;
 
 void Function_register(struct State *state);

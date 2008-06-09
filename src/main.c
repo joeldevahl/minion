@@ -1,3 +1,8 @@
+/* main.c
+ * Copyright (C) 2007-2008 Joel de Vahl.
+ * For conditions of distribution and use, see copyright notice in LICENSE
+ */
+
 #include "state.h"
 
 #include "bool.h"
@@ -19,11 +24,11 @@ int main(int argc, char **argv)
 	Function_register(&state);
 	Object_register(&state);
 
-	Bool_register(&state);
+//	Bool_register(&state);
 	Integer_register(&state);
-	List_register(&state);
+//	List_register(&state);
 	Message_register(&state);
-	Real_register(&state);
+//	Real_register(&state);
 	String_register(&state);
 
 	State_doFile(&state, "init.io");

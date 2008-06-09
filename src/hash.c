@@ -1,3 +1,8 @@
+/* hash.c
+ * Copyright (C) 2007-2008 Joel de Vahl.
+ * For conditions of distribution and use, see copyright notice in LICENSE
+ */
+
 #include "hash.h"
 
 #include <string.h>

@@ -6,7 +6,8 @@
 #ifndef MINION_FUNCTION_H
 #define MINION_FUNCTION_H
 
-struct Object;
+#include "object.h"
+
 struct State;
 
 void Function_register(struct State *state);

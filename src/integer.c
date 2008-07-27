@@ -93,7 +93,7 @@ unsigned Integer_isInteger(struct State *state, struct Object *o)
 
 void Integer_register(struct State *state)
 {
-	struct Object *o = Object_new(state);
+	struct Object *o = State_newObject(state);
 	struct Object *obj = State_getObject(state);
 	Object_init(state, o);
 	Object_appendProto(state, o, obj);

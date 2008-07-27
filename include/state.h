@@ -20,6 +20,9 @@ struct State
 void State_init(struct State *state);
 void State_delete(struct State *state);
 void State_registerProto(struct State *state, struct Object *o, const char* name);
+struct Object *State_newObject(struct State *state);
+void State_freeObject(struct State *state, struct Object *o);
+struct Object *State_getProto(struct State *state, const char* name);
 struct Object *State_getObject(struct State *state);
 struct Object *State_getProto(struct State *state, const char* name);
 struct Object *State_cloneProto(struct State *state, const char* name);

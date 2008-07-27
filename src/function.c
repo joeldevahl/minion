@@ -10,7 +10,7 @@
 
 void Function_register(struct State *state)
 {
-	struct Object *o = Object_new(state);
+	struct Object *o = State_newObject(state);
 	Object_init(state, o);
 
 	o->clone_func = &Function_clone;

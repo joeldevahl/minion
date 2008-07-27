@@ -16,19 +16,31 @@
 
 void State_init(struct State *state)
 {
-	state->root = Object_new(state);
+	state->root = State_newObject(state);
 	Object_init(state, state->root);
 }
 
 void State_delete(struct State *state)
 {
-	Object_delete(state, state->root);
+	State_freeObject(state, state->root);
 }
 
 void State_registerProto(struct State *state, struct Object *o, const char* name)
 {
 	unsigned hash = Hash_genHashVal(name);
 	Object_setSlot(state, state->root, o, hash);
+}
+
+struct Object *State_newObject(struct State *state)
+{
+	return calloc(1, sizeof(struct Object));
+}
+
+void State_freeObject(struct State *state, struct Object *o)
+{
+	o->free_func(state, o);
+	Hash_delete(o->hash);
+	free(o);
 }
 
 struct Object *State_getObject(struct State *state)

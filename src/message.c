@@ -19,7 +19,7 @@ unsigned Message_isMessage(struct State *state, struct Object *o)
 
 void Message_register(struct State *state)
 {
-	struct Object *o = Object_new(state);
+	struct Object *o = State_newObject(state);
 	Object_init(state, o);
 
 	o->clone_func = &Message_clone;
@@ -60,7 +60,7 @@ struct Object *Message_eval(struct State *state, struct Object *o, struct Object
 
 	if(target)
 	{
-		struct Object *local_env = Object_new(state);
+		struct Object *local_env = State_newObject(state);
 		struct Object *src_name_plist = Object_getSlot(state, target, PARAMS);
 		struct Object *src_val_plist = Object_getSlot(state, message, PARAMS);
 

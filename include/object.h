@@ -36,8 +36,6 @@ struct Object
 	EvalFunc eval_func;
 };
 
-struct Object *Object_new();
-void Object_delete(struct State *state, struct Object *o);
 void Object_init(struct State *state, struct Object *o);
 void Object_register(struct State *state);
 void Object_registerFunction(struct State *state, struct Object *o, const char *name, void *ptr);
@@ -49,7 +47,6 @@ void Object_deepPrint(struct State *state, struct Object *o, unsigned indent, un
 void Object_createSlot(struct State *state, struct Object *o, unsigned name_hash);
 void Object_setSlot(struct State *state, struct Object *o, struct Object *val, unsigned name_hash);
 struct Object *Object_getSlot(struct State *state, struct Object *o, unsigned name_hash);
-//struct Object *Object_lookupSlot(struct State *state, struct Object *o, struct Object *env, unsigned name_hash);
 void Object_appendProto(struct State *state, struct Object *o, struct Object *proto);
 
 #endif

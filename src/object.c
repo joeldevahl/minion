@@ -17,6 +17,31 @@
 
 // Object Slots
 
+struct Object *Object_bound_exit(struct State *state, struct Object *o, struct Object *env, struct Object *message)
+{
+	struct Object *params_list;
+	int exit_code = 0;
+
+	params_list = Object_getSlot(state, message, PARAMS);
+	if(params_list)
+	{
+		struct Object *param;
+		param = Object_getSlot(state, params_list, CHILD);
+		if(param)
+		{
+			struct Object *res;
+			res = State_doSeq(state, o, env, param);
+			if(res)
+				exit_code = res->data.ival;
+		}
+	}
+
+	exit(exit_code);
+
+	// Never gets here
+	return 0x0;
+}
+
 struct Object *Object_bound_method(struct State *state, struct Object *o, struct Object *env, struct Object *message)
 {
 	struct Object *ret = State_cloneProto(state, "Message");
@@ -108,19 +133,6 @@ struct Object *Object_bound_do(struct State *state, struct Object *o, struct Obj
 }
 
 // Interface
-
-struct Object *Object_new(struct State *state)
-{
-	return calloc(1, sizeof(struct Object));
-}
-
-void Object_delete(struct State *state, struct Object *o)
-{
-	o->free_func(state, o);
-	Hash_delete(o->hash);
-	free(o);
-}
-
 void Object_init(struct State *state, struct Object *o)
 {
 	o->hash = calloc(1, sizeof(struct Hash));
@@ -142,6 +154,8 @@ void Object_register(struct State *state)
 	Object_registerFunction(state, o, "clone", &Object_bound_clone);
 	Object_registerFunction(state, o, "method", &Object_bound_method);
 
+	Object_registerFunction(state, o, "exit", &Object_bound_exit);
+
 	State_registerProto(state, o, "Object");
 }
 
@@ -155,7 +169,7 @@ void Object_registerFunction(struct State *state, struct Object *o, const char *
 
 struct Object *Object_clone(struct State *state, struct Object *o)
 {
-	struct Object *ret = Object_new(state);
+	struct Object *ret = State_newObject(state);
 	Object_init(state, ret);
 	Hash_copy(ret->hash, o->hash);
 
@@ -197,7 +211,7 @@ struct Object *Object_evalExpression(struct State *state, struct Object *o, stru
 
 void Object_createSlot(struct State *state, struct Object *o, unsigned name_hash)
 {
-	struct Object *val = Object_new(state);
+	struct Object *val = State_newObject(state);
 	Object_init(state, val);
 	Hash_set_h(o->hash, name_hash, val);
 }
@@ -223,15 +237,7 @@ struct Object *Object_getSlot(struct State *state, struct Object *o, unsigned na
 
 	return 0x0;
 }
-/*
-struct Object *Object_lookupSlot(struct State *state, struct Object *o, struct Object *env, unsigned name_hash)
-{
-	struct Object *res = Object_getSlot(state, o, name_hash);
-	if(!res)
-		res = Object_getSlot(state, env, name_hash);
-	return res;
-}
-*/
+
 void print_indent(unsigned i)
 {
 	while(i--)

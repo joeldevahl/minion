@@ -17,7 +17,7 @@
 void AST_init(struct AST *ast, struct State *state)
 {
 	ast->state = state;
-	ast->root = Object_new();
+	ast->root = State_newObject(state);
 	Object_init(ast->state, ast->root);
 	ast->obj = ast->root;
 	AST_stepChild(ast);

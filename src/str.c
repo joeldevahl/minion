@@ -27,7 +27,7 @@ struct Object *String_bound_length(struct State *state, struct Object *o, struct
 	if (!o || !o->data.str)
 		len->data.ival = 0;
 	else
-		len->data.ival = strlen(o->data.str);
+		len->data.ival = (unsigned)strlen(o->data.str);
 
 	return len;
 }
@@ -101,7 +101,8 @@ struct Object *String_clone(struct State *state, struct Object *o)
 	if(o->data.ptr){
 		unsigned length = (unsigned)strlen((char*)o->data.ptr);
 		ret->data.ptr = (void *)calloc(length + 1, sizeof(char));
-		strcpy((char*)ret->data.ptr, (char*)o->data.ptr);
+		strncpy((char*)ret->data.ptr, (char*)o->data.ptr, length);
+		((char*)ret->data.ptr)[length] = 0;
 	}
 
 	return ret;

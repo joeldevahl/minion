@@ -1,8 +1,7 @@
 Object do(
-    setSlot(fak, method(n,
-	    if(n,
-		    n mul(fak(n sub(1))),
-			1
-		)
-	))
+	setSlot(createIncrementor, method(a, b,
+		method( setSlot(temp, a)
+				setSlot(a, a add(b))
+				temp)))
+	setSlot(simpleIncr, createIncrementor(1, 1))
 )

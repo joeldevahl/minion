@@ -9,6 +9,7 @@
 #include "function.h"
 #include "message.h"
 #include "integer.h"
+#include "str.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,6 +49,8 @@ struct Object *Object_bound_method(struct State *state, struct Object *o, struct
 	ret->isLiteral = 0;
 	Object_createSlot(state, ret, PARAMS);
 	Object_setSlot(state, ret, Object_getSlot(state, message, PARAMS), PARAMS);
+	Object_createSlot(state, ret, ENV);
+	Object_setSlot(state, ret, env, ENV);
 
 	return ret;
 }

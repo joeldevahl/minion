@@ -62,10 +62,12 @@ struct Object *Message_eval(struct State *state, struct Object *o, struct Object
 	{
 		struct Object *local_env = State_newObject(state);
 		struct Object *src_name_plist = Object_getSlot(state, target, PARAMS);
+		struct Object *closure_env = Object_getSlot(state, target, ENV);
 		struct Object *src_val_plist = Object_getSlot(state, message, PARAMS);
 
 		Object_init(state, local_env);
-		Object_appendProto(state, local_env, o);
+		if(closure_env)
+			Object_appendProto(state, local_env, closure_env);
 
 		while(src_val_plist)
 		{

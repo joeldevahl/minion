@@ -10,6 +10,7 @@
 #define NEXT Hash_genHashVal("next")
 #define PARAMS Hash_genHashVal("params")
 #define NAME Hash_genHashVal("name")
+#define ENV Hash_genHashVal("env")
 
 struct State;
 

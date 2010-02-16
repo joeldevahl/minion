@@ -1,0 +1,17 @@
+minion - a minimalistic io implementation
+
+This project is the start of a minimal implementation of the io programming
+language, or something syntactically similar. It consists of a lexer, a
+parser, a hashtable acting as objects and a simple AST traversal. It has no
+support for infix operations:
+
+    a + b
+
+is not valid. One has to write
+
+    a +(b)
+
+instead, if a slot + has been added to the type a represents. This is to be
+read as "call the method + on a, with the argument b".
+
+Happy hacking.
